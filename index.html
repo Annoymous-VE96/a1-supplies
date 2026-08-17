@@ -7,7 +7,2003 @@
 <meta name="description" content="Wholesale cleaning, hygiene, janitorial, catering and PPE supplies for Melbourne businesses. Trade accounts approved in 1 business day. Free metro delivery on orders over $250 + GST.">
 <meta name="theme-color" content="#0F172A">
 <link rel="icon" href="https://a1supplies.com.au/wp-content/uploads/2023/06/hdorgngelogo.png">
-<link rel="stylesheet" href="css/style.css">
+<style>
+/* ============================================================================
+   A1 WHOLESALE SUPPLIES — HOMEPAGE
+   ----------------------------------------------------------------------------
+   Design system: "shelf edge & docket".
+   A 4px orange rule sits on the leading edge of every band and card, the way a
+   label strip sits on the front of warehouse racking. Numbers are always set in
+   tabular figures so they align like a stock sheet.
+
+   Contents
+     01  Design tokens
+     02  Reset & base
+     03  Utilities  (shell, sr-only, icon, num, eyebrow)
+     04  Buttons & links
+     05  Announcement bar
+     06  Header — utility row, search, category nav
+     07  Mobile drawer
+     99  Responsive
+   Breakpoints are desktop-first max-width: 1200 · 1024 · 768 · 480.
+   (Media query conditions are the only place literal lengths appear — custom
+   properties are not valid inside @media prelude.)
+   ========================================================================== */
+
+
+/* ==========================================================================
+   01 · DESIGN TOKENS
+   ========================================================================== */
+:root {
+
+  /* --- Colour ------------------------------------------------------------ */
+  --brand:            #F36F21;   /* logo orange — fills, rules, focus on dark  */
+  --brand-ink:        #B93E06;   /* AA orange for text/rings on light: 5.6:1   */
+  --brand-wash:       #FDF0E7;   /* 8% brand tint — chips, hover fills         */
+
+  /* Tints and shades stepped off the two brief colours. No new hues. */
+  --brand-50:         #FEF7F2;   /* faintest warm ground                       */
+  --brand-100:        #FBE3D1;   /* warm band fill                             */
+  --brand-200:        #F7C7A4;   /* warm rule / divider on warm ground         */
+  --ink-800:          #172033;   /* one step off the dark base                 */
+  --ink-700:          #1E293B;   /* dark card fill on a dark band              */
+
+  --ink:              #0F172A;   /* structural dark — bands, footer, headings  */
+  --ink-body:         #475569;   /* body text                                  */
+  --ink-muted:        #94A3B8;   /* meta on DARK grounds only                  */
+  --ink-soft:         #5B6B82;   /* meta on LIGHT grounds — 5.4:1 on white     */
+  --line:             #E2E8F0;   /* hairlines, borders                         */
+  --surface:          #FFFFFF;
+  --surface-alt:      #F8FAFC;
+
+  /* on dark surfaces */
+  --on-dark:          #FFFFFF;
+  --on-dark-muted:    #94A3B8;
+  --line-dark:        rgba(255, 255, 255, .14);
+  --wash-dark:        rgba(255, 255, 255, .05);
+
+  /* --- Typography -------------------------------------------------------- */
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  --fs-display:   clamp(2.5rem, 5vw, 4rem);
+  --fs-h2:        clamp(1.875rem, 3vw, 2.5rem);
+  --fs-h3:        1.375rem;
+  --fs-h4:        1.125rem;  /* 18px — content labels: post titles, product card titles */
+  --fs-lead:      1.1875rem;
+  --fs-body:      1rem;
+  --fs-sm:        .875rem;
+  --fs-xs:        .75rem;
+  --fs-eyebrow:   .75rem;
+
+  --fw-regular:   400;
+  --fw-medium:    500;
+  --fw-semibold:  600;
+  --fw-bold:      700;
+  --fw-black:     800;
+
+  --lh-tight:     1.02;
+  --lh-heading:   1.1;
+  --lh-snug:      1.25;
+  --lh-normal:    1.5;
+  --lh-body:      1.6;
+
+  --ls-display:   -.03em;
+  --ls-h2:        -.02em;
+  --ls-h3:        -.01em;
+  --ls-none:      0;
+  --ls-wide:      .04em;
+  --ls-eyebrow:   .14em;
+
+  /* --- Space (4px base) -------------------------------------------------- */
+  --sp-0:   0;
+  --sp-1:   .25rem;   /*  4 */
+  --sp-2:   .5rem;    /*  8 */
+  --sp-3:   .75rem;   /* 12 */
+  --sp-4:   1rem;     /* 16 */
+  --sp-5:   1.5rem;   /* 24 */
+  --sp-6:   2rem;     /* 32 */
+  --sp-7:   3rem;     /* 48 */
+  --sp-8:   4rem;     /* 64 */
+  --sp-9:   6rem;     /* 96 */
+  --sp-10:  8rem;     /* 128 */
+
+  /* --- Radii ------------------------------------------------------------- */
+  --r-xs:   2px;
+  --r-sm:   4px;
+  --r-md:   6px;
+  --r-pill: 999px;
+
+  /* --- Edges ------------------------------------------------------------- */
+  --edge:   4px;      /* the shelf edge */
+  --hair:   1px;
+
+  /* --- Shadow (tinted with ink, never pure black) ------------------------ */
+  --shadow-1:      0 1px 2px rgba(15, 23, 42, .06), 0 2px 8px rgba(15, 23, 42, .05);
+  --shadow-2:      0 2px 4px rgba(15, 23, 42, .06), 0 12px 28px rgba(15, 23, 42, .13);
+  --shadow-header: 0 1px 0 rgba(15, 23, 42, .07), 0 6px 20px rgba(15, 23, 42, .06);
+  --shadow-docket: 0 2px 6px rgba(15, 23, 42, .12), 0 20px 48px rgba(15, 23, 42, .28);
+  --shadow-drawer: -8px 0 40px rgba(15, 23, 42, .28);
+
+  /* --- Motion ------------------------------------------------------------ */
+  --t-fast:  140ms;
+  --t-base:  240ms;
+  --t-slow:  420ms;
+  --ease:      cubic-bezier(.2, .7, .3, 1);
+  --ease-snap:  cubic-bezier(.4, 0, .2, 1);  /* snappier for hover/active micro-interactions */
+  --lift:    -4px;
+
+  /* --- Layout ------------------------------------------------------------ */
+  --maxw:        1280px;
+  --gutter:      var(--sp-6);
+  --tap:         44px;          /* minimum touch target */
+  --focus-ring:  3px;
+  --focus-color: var(--brand-ink);
+  --focus-gap:   2px;
+
+  /* Header metrics — JS reads nothing; the condensed state just re-declares. */
+  --logo-h:      44px;
+  --utility-pad: var(--sp-4);
+
+  /* Section padding — modulated by density */
+  --section-pad:       var(--sp-9);  /* 96px: generous for breathing sections */
+  --section-pad-snug:  var(--sp-7);  /* 48px: dense-content sections */
+
+  /* Composition */
+  --hero-overhang: var(--sp-8);   /* how far the docket breaks past the photo */
+  --fs-mark:       5rem;          /* the ghost quote mark */
+  --logo-rail:     3rem;          /* marquee logo height */
+  --reveal-rise:   16px;
+  --marquee-dur:   44s;
+  --stag:          70ms;          /* per-item stagger inside a revealing grid */
+  --drift-dur:     26s;           /* hero photo drift */
+
+  /* Racking stripe — the diagonal of a warehouse rack brace, at low alpha.
+     Used as a ground texture so large bands are never flatly empty. */
+  --rack: repeating-linear-gradient(
+            135deg,
+            rgba(243, 111, 33, .07) 0 var(--hair),
+            transparent var(--hair) var(--sp-4)
+          );
+  --rack-dark: repeating-linear-gradient(
+            135deg,
+            rgba(243, 111, 33, .13) 0 var(--hair),
+            transparent var(--hair) var(--sp-4)
+          );
+}
+
+
+/* ==========================================================================
+   02 · RESET & BASE
+   ========================================================================== */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+* { margin: 0; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--surface);
+  color: var(--ink-body);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body.is-locked { overflow: hidden; }
+
+img,
+svg,
+video { display: block; max-width: 100%; }
+
+img { height: auto; }
+
+h1, h2, h3, h4 {
+  color: var(--ink);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-heading);
+  text-wrap: balance;
+}
+
+p { text-wrap: pretty; }
+
+a { color: var(--brand-ink); }
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button { cursor: pointer; }
+
+ul, ol { list-style: none; padding: 0; }
+
+:focus-visible {
+  outline: var(--focus-ring) solid var(--focus-color);
+  outline-offset: var(--focus-gap);
+  border-radius: var(--r-xs);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+
+/* ==========================================================================
+   03 · UTILITIES
+   ========================================================================== */
+.shell {
+  width: 100%;
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: fixed;
+  top: var(--sp-2);
+  left: var(--sp-2);
+  z-index: 100;
+  padding: var(--sp-3) var(--sp-5);
+  background: var(--ink);
+  color: var(--on-dark);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  border-radius: var(--r-sm);
+  border-top: var(--edge) solid var(--brand);
+  text-decoration: none;
+  transform: translateY(calc(-100% - var(--sp-5)));
+  transition: transform var(--t-fast) var(--ease);
+}
+
+.skip-link:focus-visible { transform: translateY(0); }
+
+/* Stroked icon system — every icon inherits colour and weight from its parent */
+.icon {
+  width: var(--sp-5);
+  height: var(--sp-5);
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Every figure on the page — prices, metrics, phone, counts — aligns */
+.num { font-variant-numeric: tabular-nums; }
+
+.eyebrow {
+  display: block;
+  color: var(--brand-ink);
+  font-size: var(--fs-eyebrow);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-eyebrow);
+  line-height: var(--lh-normal);
+  text-transform: uppercase;
+}
+
+
+/* ==========================================================================
+   04 · BUTTONS
+   ========================================================================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  min-height: var(--tap);
+  padding: var(--sp-3) var(--sp-5);
+  border: var(--hair) solid transparent;
+  border-radius: var(--r-sm);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-wide);
+  line-height: var(--lh-normal);
+  text-decoration: none;
+  transition: background-color var(--t-fast) var(--ease-snap),
+              border-color var(--t-fast) var(--ease-snap),
+              color var(--t-fast) var(--ease-snap),
+              box-shadow var(--t-fast) var(--ease-snap),
+              transform var(--t-fast) var(--ease-snap);
+}
+
+.btn:active { transform: translateY(var(--hair)); }
+
+.btn--primary {
+  background: var(--brand);
+  color: var(--ink);
+  box-shadow: var(--shadow-1);
+}
+
+.btn--primary:hover {
+  background: var(--brand-ink);
+  color: var(--on-dark);
+  box-shadow: var(--shadow-2);
+}
+
+.btn--block { width: 100%; }
+
+.btn--lg {
+  padding: var(--sp-4) var(--sp-6);
+  font-size: var(--fs-body);
+}
+
+.btn--ghost {
+  background: var(--surface);
+  border-color: var(--line);
+  color: var(--ink);
+}
+
+.btn--ghost:hover {
+  background: var(--brand-wash);
+  border-color: var(--brand);
+  color: var(--brand-ink);
+}
+
+.btn--outline {
+  background: transparent;
+  border-color: var(--line-dark);
+  color: var(--on-dark);
+}
+
+.btn--outline:hover {
+  background: var(--wash-dark);
+  border-color: var(--brand);
+  color: var(--brand);
+}
+
+
+/* ==========================================================================
+   04b · SECTION SHELL & HEADS
+   ========================================================================== */
+.section {
+  position: relative;
+  padding-block: var(--section-pt, var(--sp-9)) var(--section-pb, var(--sp-9));
+}
+
+.section--alt  { background: var(--surface-alt); }
+
+/* Warm ground — carries the brand hue across a whole band without shouting */
+.section--wash {
+  background: var(--brand-50);
+  border-block: var(--hair) solid var(--brand-100);
+}
+
+.section--dark {
+  background: var(--ink);
+  border-top: var(--edge) solid var(--brand);
+  color: var(--on-dark-muted);
+}
+
+/* Full brand fill — reserved for the closing ask */
+.section--brand {
+  background: var(--brand);
+  border-top: var(--edge) solid var(--ink);
+  color: var(--ink);
+}
+
+/* Racking texture. Sits under the content, never over it. */
+.section--rack::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--rack);
+  pointer-events: none;
+}
+
+.section--dark.section--rack::before { background-image: var(--rack-dark); }
+.section > * { position: relative; }
+
+.section--tight { --section-pt: var(--sp-7); --section-pb: var(--sp-7); }
+.section--snug  { --section-pt: var(--section-pad-snug); --section-pb: var(--section-pad-snug); }
+
+.sec-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: var(--sp-4) var(--sp-7);
+  margin-bottom: var(--sp-7);
+  padding-bottom: var(--sp-5);
+  border-bottom: var(--hair) solid var(--line);
+}
+
+.sec-head__text { display: grid; gap: var(--sp-3); }
+
+.sec-head__title {
+  font-size: var(--fs-h2);
+  letter-spacing: var(--ls-h2);
+  max-width: 20ch;
+}
+
+.sec-head__lede {
+  max-width: 34ch;
+  color: var(--ink-body);
+  font-size: var(--fs-sm);
+}
+
+.sec-head__link {
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  min-height: var(--tap);
+  color: var(--brand-ink);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-wide);
+  text-decoration: underline;
+  text-decoration-thickness: var(--hair);
+  text-underline-offset: var(--sp-1);
+  white-space: nowrap;
+  transition: text-decoration-thickness var(--t-fast) var(--ease);
+}
+
+.sec-head__link:hover { text-decoration-thickness: var(--edge); }
+
+
+/* ==========================================================================
+   04c · SCROLL REVEAL  (only armed once JS confirms it can disarm it)
+   ========================================================================== */
+.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(var(--reveal-rise));
+  transition: opacity var(--t-slow) var(--ease), transform var(--t-slow) var(--ease);
+}
+
+.js [data-reveal].is-in { opacity: 1; transform: none; }
+
+/* Grid children arrive in sequence rather than as one block */
+.js [data-reveal] [data-stagger] > * {
+  opacity: 0;
+  transform: translateY(var(--reveal-rise));
+  transition: opacity var(--t-slow) var(--ease), transform var(--t-slow) var(--ease);
+}
+
+.js [data-reveal].is-in [data-stagger] > * { opacity: 1; transform: none; }
+
+.js [data-reveal] [data-stagger] > :nth-child(1) { transition-delay: calc(0 * var(--stag)); }
+.js [data-reveal] [data-stagger] > :nth-child(2) { transition-delay: calc(1 * var(--stag)); }
+.js [data-reveal] [data-stagger] > :nth-child(3) { transition-delay: calc(2 * var(--stag)); }
+.js [data-reveal] [data-stagger] > :nth-child(4) { transition-delay: calc(3 * var(--stag)); }
+.js [data-reveal] [data-stagger] > :nth-child(5) { transition-delay: calc(4 * var(--stag)); }
+.js [data-reveal] [data-stagger] > :nth-child(6) { transition-delay: calc(5 * var(--stag)); }
+
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal],
+  .js [data-reveal] [data-stagger] > * { opacity: 1; transform: none; }
+}
+
+
+/* ==========================================================================
+   08 · HERO
+   ========================================================================== */
+.hero { margin-bottom: var(--hero-overhang); }
+
+/* Editorial split: the headline holds the left, the pitch and both CTAs sit
+   in the right column bottom-aligned to it. */
+.hero__copy {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr);
+  align-items: end;
+  gap: var(--sp-6) var(--sp-8);
+  padding-block: var(--sp-8) var(--sp-7);
+}
+
+.hero__title {
+  font-size: var(--fs-display);
+  font-weight: var(--fw-black);
+  letter-spacing: var(--ls-display);
+  line-height: var(--lh-tight);
+}
+
+.hero__pitch {
+  display: grid;
+  gap: var(--sp-5);
+  padding-bottom: var(--sp-2);
+}
+
+.hero__line { display: block; }
+
+.hero__line--muted {
+  color: var(--ink-body);
+  font-weight: var(--fw-regular);
+}
+
+/* The rotating word. Words share one grid cell so the box is sized by the
+   widest of them — no reflow on swap — and nothing is clipped, so descenders
+   in "Hygiene" survive. */
+.rotator {
+  display: inline-grid;
+  vertical-align: baseline;
+  color: var(--brand-ink);
+}
+
+.rotator__track { display: inline-grid; }
+
+.rotator__word {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transform: translateY(.28em);
+  transition: opacity var(--t-slow) var(--ease), transform var(--t-slow) var(--ease);
+}
+
+.rotator__word.is-current { opacity: 1; transform: none; }
+
+.hero__lede {
+  max-width: 46ch;
+  color: var(--ink-body);
+  font-size: var(--fs-lead);
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+}
+
+/* Warm ground behind the headline so the fold is never a flat white sheet */
+.hero {
+  background:
+    radial-gradient(120% 90% at 88% 0%, var(--brand-50) 0%, transparent 62%),
+    var(--surface);
+}
+
+.hero__copy::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--rack);
+  opacity: .8;
+  pointer-events: none;
+}
+
+.hero__copy { position: relative; }
+.hero__title, .hero__pitch { position: relative; }
+
+/* --- photo band --------------------------------------------------------- */
+.hero__band { position: relative; }
+
+.hero__frame { display: block; overflow: hidden; }
+
+.hero__photo {
+  width: 100%;
+  height: clamp(18rem, 30vw, 30rem);
+  object-fit: cover;
+  object-position: 62% center;
+  animation: hero-drift var(--drift-dur) var(--ease) infinite alternate;
+}
+/* Note: @keyframes hero-drift easing is now via the animation shorthand above,
+   not the CSS 'ease' keyword. The var(--ease) token ensures consistency. */
+
+@keyframes hero-drift {
+  from { transform: scale(1)     translate3d(0, 0, 0); }
+  to   { transform: scale(1.055) translate3d(-1.5%, 0, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__photo { animation: none; }
+}
+
+.hero__band-inner {
+  position: absolute;
+  inset-inline: 0;
+  bottom: calc(-1 * var(--hero-overhang));
+}
+
+
+/* ==========================================================================
+   09 · DOCKET  — the page's trust object. Used twice, never decoratively.
+   ========================================================================== */
+.docket {
+  width: min(27rem, 100%);
+  padding: var(--sp-5);
+  background: var(--ink);
+  border-top: var(--edge) solid var(--brand);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-docket);
+  color: var(--on-dark);
+}
+
+.docket__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-2) var(--sp-4);
+  padding-bottom: var(--sp-4);
+  border-bottom: var(--hair) solid var(--line-dark);
+  font-size: var(--fs-xs);
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+}
+
+.docket__head-label { color: var(--brand); font-weight: var(--fw-bold); }
+.docket__head-meta  { color: var(--on-dark-muted); }
+
+.docket__row {
+  display: grid;
+  grid-template-columns: 6rem minmax(0, 1fr);
+  align-items: baseline;
+  gap: var(--sp-4);
+  padding-block: var(--sp-3);
+  border-bottom: var(--hair) solid var(--line-dark);
+}
+
+/* Both cells are pinned to row 1 — without the explicit row, placing the value
+   back in column 1 makes the grid open a second row for it. */
+.docket__label {
+  grid-area: 1 / 2;
+  color: var(--on-dark-muted);
+  font-size: var(--fs-sm);
+}
+
+.docket__value {
+  grid-area: 1 / 1;
+  margin: 0;
+  color: var(--on-dark);
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-black);
+  letter-spacing: var(--ls-h3);
+  line-height: var(--lh-snug);
+}
+
+.docket__foot {
+  margin-top: var(--sp-4);
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--wash-dark);
+  border-left: var(--edge) solid var(--brand);
+  border-radius: var(--r-xs);
+  color: var(--on-dark);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-normal);
+}
+
+.docket__foot strong { color: var(--brand); letter-spacing: var(--ls-wide); }
+.docket__foot-sep    { color: var(--on-dark-muted); padding-inline: var(--sp-1); }
+
+
+/* ==========================================================================
+   10 · INDUSTRY TILES
+   ========================================================================== */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sp-5);
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--surface);
+  border: var(--hair) solid var(--line);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-1);
+  text-decoration: none;
+  transition: transform var(--t-base) var(--ease-snap),
+              box-shadow var(--t-base) var(--ease-snap),
+              border-color var(--t-base) var(--ease-snap);
+}
+
+.tile:hover { transform: translateY(var(--lift)); box-shadow: var(--shadow-2); border-color: var(--brand); }
+
+/* These are line icons, not photographs — they get contained and padded so
+   nothing is cropped. */
+.tile__media {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 3;
+  padding: var(--sp-6);
+  background: var(--brand-50);
+  overflow: hidden;
+  transition: background-color var(--t-base) var(--ease);
+}
+
+.tile:hover .tile__media { background: var(--brand-100); }
+
+.tile__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform var(--t-slow) var(--ease);
+}
+
+.tile:hover .tile__media img { transform: scale(1.04); }
+
+/* the bin label on the shelf edge */
+.tile__bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  margin-top: auto;
+  padding: var(--sp-4) var(--sp-5);
+  border-top: var(--hair) solid var(--line);
+}
+
+.tile__bar::before {
+  content: "";
+  position: absolute;
+  top: calc(-1 * var(--hair));
+  left: 0;
+  width: 100%;
+  height: var(--edge);
+  background: var(--brand);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--t-base) var(--ease);
+}
+
+.tile:hover .tile__bar::before,
+.tile:focus-visible .tile__bar::before { transform: scaleX(1); }
+
+.tile__label {
+  color: var(--ink);
+  font-size: var(--fs-body);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-h3);
+}
+
+.tile__arrow {
+  color: var(--brand-ink);
+  font-size: var(--fs-h3);
+  transition: transform var(--t-base) var(--ease);
+}
+
+.tile:hover .tile__arrow { transform: translateX(var(--sp-1)); }
+
+
+/* ==========================================================================
+   11 · VALUE PROPS
+   ========================================================================== */
+.props {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--sp-5);
+}
+
+.prop {
+  padding: var(--sp-5);
+  background: var(--surface);
+  border: var(--hair) solid var(--line);
+  border-top: var(--edge) solid var(--brand);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-1);
+}
+
+.prop__title {
+  margin-bottom: var(--sp-3);
+  font-size: var(--fs-h3);
+  letter-spacing: var(--ls-h3);
+}
+
+.prop__body { font-size: var(--fs-sm); }
+
+
+/* ==========================================================================
+   12 · PRODUCT CARDS
+   ========================================================================== */
+.products {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sp-5);
+}
+
+.pcard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: var(--hair) solid var(--line);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-1);
+  transition: transform var(--t-base) var(--ease-snap),
+              box-shadow var(--t-base) var(--ease-snap),
+              border-color var(--t-base) var(--ease-snap);
+}
+
+.pcard:hover { transform: translateY(var(--lift)); box-shadow: var(--shadow-2); border-color: var(--brand); }
+
+.pcard__media {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: var(--sp-3);
+  aspect-ratio: 4 / 3;
+  padding: var(--sp-5);
+  background: var(--surface);
+  border-bottom: var(--hair) solid var(--line);
+  box-shadow: inset 0 0 0 var(--hair) var(--line);  /* subtle inset frame */
+  transition: background-color var(--t-base) var(--ease);
+}
+
+.pcard:hover .pcard__media { background: var(--surface-alt); }
+
+.pcard__media img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  object-fit: contain;
+}
+
+/* Honest empty state — the live site has no photo for this line yet. */
+.pcard__brandmark { max-width: 8rem; filter: grayscale(1); opacity: .38; }
+
+.pcard__nomedia {
+  color: var(--ink-soft);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+}
+
+.pcard__body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-5);
+}
+
+.pcard__cat {
+  align-self: flex-start;
+  padding: var(--sp-1) var(--sp-2);
+  background: var(--brand-wash);
+  border-radius: var(--r-xs);
+  color: var(--brand-ink);
+  font-size: var(--fs-eyebrow);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+}
+
+/* Two-line box keeps prices and CTAs on one line across a row */
+.pcard__title {
+  min-height: calc(var(--fs-h4) * var(--lh-snug) * 2);
+  font-size: var(--fs-h4);
+  font-weight: var(--fw-semibold);
+  line-height: var(--lh-snug);
+}
+
+.pcard__title a {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+/* stretched link — one accessible action, whole card clickable */
+.pcard__title a::after,
+.post__title a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.pcard:hover .pcard__title a { color: var(--brand-ink); }
+
+.pcard__price {
+  margin-top: auto;
+  padding-top: var(--sp-3);
+  color: var(--ink);
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-black);
+  letter-spacing: var(--ls-h3);
+}
+
+.pcard__from {
+  color: var(--ink-soft);
+  font-size: var(--fs-eyebrow);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+}
+
+.pcard__cta { margin-top: var(--sp-3); }
+.pcard:hover .pcard__cta { background: var(--brand-wash); border-color: var(--brand); color: var(--brand-ink); }
+
+/* Move the ring to the card, not the title text, when the stretched link is
+   keyboard-focused. Browsers without :has() keep the default inner ring. */
+.pcard:has(:focus-visible),
+.post:has(:focus-visible) {
+  outline: var(--focus-ring) solid var(--focus-color);
+  outline-offset: var(--focus-gap);
+}
+
+.pcard:has(:focus-visible) :focus-visible,
+.post:has(:focus-visible) :focus-visible { outline: none; }
+
+
+/* ==========================================================================
+   13 · TRADE ACCOUNT BAND
+   ========================================================================== */
+.trade__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 27rem);
+  align-items: center;
+  gap: var(--sp-8);
+}
+
+.eyebrow--on-dark { color: var(--brand); }
+
+.trade__title {
+  margin-block: var(--sp-3) var(--sp-4);
+  color: var(--on-dark);
+  font-size: var(--fs-h2);
+  letter-spacing: var(--ls-h2);
+  max-width: 18ch;
+}
+
+.trade__body {
+  max-width: 54ch;
+  font-size: var(--fs-lead);
+}
+
+.docket--call { width: 100%; box-shadow: none; border: var(--hair) solid var(--line-dark); border-top: var(--edge) solid var(--brand); }
+
+.trade__actions {
+  display: grid;
+  gap: var(--sp-3);
+  padding-block: var(--sp-5);
+}
+
+.docket--call .docket__foot {
+  margin-top: 0;
+  border-left-color: var(--line-dark);
+  color: var(--on-dark-muted);
+  font-size: var(--fs-xs);
+}
+
+
+/* ==========================================================================
+   14 · BRAND MARQUEE
+   ========================================================================== */
+.marquee-sec__title { margin-bottom: var(--sp-5); }
+
+.marquee {
+  position: relative;
+  overflow: hidden;
+  padding-block: var(--sp-2);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+.marquee__track {
+  display: flex;
+  width: max-content;
+  animation: marquee-run var(--marquee-dur) linear infinite;
+}
+
+.marquee:hover .marquee__track,
+.marquee:focus-within .marquee__track { animation-play-state: paused; }
+
+.marquee__set {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-5);
+  margin: 0;
+  /* Use gap-only spacing — padding creates a seam at the loop point. */
+  padding-inline: calc(var(--sp-5) / 2);
+}
+
+/* The supplied logo files carry their own white ground, so each one is set on
+   a deliberate white chip rather than floating as a stray white rectangle. */
+.marquee__set li {
+  display: grid;
+  place-items: center;
+  height: calc(var(--logo-rail) + var(--sp-6));
+  padding-inline: var(--sp-5);
+  background: var(--surface);
+  border: var(--hair) solid var(--line);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-1);
+  transition: transform var(--t-base) var(--ease),
+              border-color var(--t-base) var(--ease),
+              box-shadow var(--t-base) var(--ease);
+}
+
+.marquee__set li:hover {
+  transform: translateY(var(--lift));
+  border-color: var(--brand);
+  box-shadow: var(--shadow-2);
+}
+
+.marquee__set img {
+  height: var(--logo-rail);
+  width: auto;
+  max-width: none;
+  object-fit: contain;
+}
+
+@keyframes marquee-run {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee { -webkit-mask-image: none; mask-image: none; }
+  .marquee__track { animation: none; width: 100%; flex-wrap: wrap; justify-content: center; }
+  .marquee__set { flex-wrap: wrap; justify-content: center; gap: var(--sp-6); }
+  .marquee__set[aria-hidden="true"] { display: none; }
+  .marquee__set img { opacity: 1; filter: none; }
+}
+
+
+/* ==========================================================================
+   15 · TESTIMONIALS
+   ========================================================================== */
+.quotes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sp-5);
+}
+
+.quote {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+  height: 100%;
+  padding: var(--sp-6) var(--sp-5) var(--sp-5);
+  background: var(--surface);
+  border: var(--hair) solid var(--line);
+  border-top: var(--edge) solid var(--brand);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-1);
+  overflow: hidden;
+}
+
+.quote::before {
+  content: "\201C";
+  position: absolute;
+  top: calc(-1 * var(--sp-2));
+  right: var(--sp-4);
+  color: var(--brand-wash);
+  font-size: var(--fs-mark);
+  font-weight: var(--fw-black);
+  line-height: 1;
+}
+
+.quote__text {
+  position: relative;
+  max-width: 65ch;
+  color: var(--ink);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+}
+
+.quote__by {
+  display: grid;
+  gap: var(--sp-1);
+  margin-top: auto;
+  padding-top: var(--sp-4);
+  padding-left: var(--sp-4);
+  border-top: var(--hair) solid var(--line);
+  border-left: var(--edge) solid var(--brand);
+}
+
+.quote__name {
+  color: var(--ink);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-h3);
+}
+
+.quote__role { color: var(--ink-soft); font-size: var(--fs-xs); }
+
+
+/* ==========================================================================
+   16 · FAQ ACCORDION
+   ========================================================================== */
+.faq__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 21rem) minmax(0, 1fr);
+  align-items: start;
+  gap: var(--sp-8);
+}
+
+.faq__aside { position: sticky; top: var(--sp-9); }
+
+.faq__title {
+  margin-block: var(--sp-3) var(--sp-5);
+  font-size: var(--fs-h2);
+  letter-spacing: var(--ls-h2);
+}
+
+.faq__contact {
+  display: grid;
+  gap: var(--sp-1);
+  padding: var(--sp-5);
+  background: var(--surface);
+  border: var(--hair) solid var(--line);
+  border-left: var(--edge) solid var(--brand);
+  border-radius: var(--r-xs);
+  box-shadow: var(--shadow-1);
+}
+
+.faq__contact-cta { margin-top: var(--sp-4); }
+
+.faq__contact-lede {
+  margin-bottom: var(--sp-2);
+  color: var(--ink);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+}
+
+.faq__contact-link {
+  color: var(--brand-ink);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  text-decoration: none;
+}
+
+.faq__contact-link:hover { text-decoration: underline; text-underline-offset: var(--sp-1); }
+.faq__contact-hours { margin-top: var(--sp-2); color: var(--ink-soft); font-size: var(--fs-xs); }
+
+/* Each question is its own card so the column reads as stock, not as rules */
+.acc { display: grid; gap: var(--sp-3); }
+
+.acc__item {
+  background: var(--surface);
+  border: var(--hair) solid var(--line);
+  border-radius: var(--r-sm);
+  box-shadow: var(--shadow-1);
+  overflow: hidden;
+  transition: border-color var(--t-base) var(--ease), box-shadow var(--t-base) var(--ease);
+}
+
+.acc__item:hover { border-color: var(--brand-200); }
+
+.acc__item.is-open {
+  border-color: var(--brand);
+  box-shadow: var(--shadow-2);
+}
+
+.acc__heading { font-size: inherit; font-weight: inherit; }
+
+.acc__btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-5);
+  width: 100%;
+  min-height: var(--tap);
+  padding: var(--sp-4) var(--sp-5);
+  background: transparent;
+  border: 0;
+  border-left: var(--edge) solid transparent;
+  color: var(--ink);
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-h3);
+  line-height: var(--lh-snug);
+  text-align: left;
+  transition: color var(--t-fast) var(--ease),
+              border-left-color var(--t-base) var(--ease);
+}
+
+/* The indent is done via transform, not padding — avoids layout-triggering animation. */
+.acc__btn > span {
+  display: block;
+  transition: transform var(--t-base) var(--ease);
+}
+
+.acc__btn:hover { color: var(--brand-ink); }
+
+.acc__item.is-open .acc__btn {
+  color: var(--brand-ink);
+  border-left-color: var(--brand);
+}
+
+.acc__item.is-open .acc__btn > span {
+  transform: translateX(var(--sp-1));
+}
+
+.acc__chevron {
+  width: var(--sp-5);
+  height: var(--sp-5);
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform var(--t-base) var(--ease);
+}
+
+.acc__item.is-open .acc__chevron { transform: rotate(180deg); }
+
+/* 0fr → 1fr gives a genuinely fluid height with no measured max-height */
+.acc__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--t-base) var(--ease);
+}
+
+.acc__item.is-open .acc__panel { grid-template-rows: 1fr; }
+
+.acc__inner {
+  overflow: hidden;
+  visibility: hidden;
+  transition: visibility 0s linear var(--t-base);
+}
+
+.acc__item.is-open .acc__inner { visibility: visible; transition-delay: 0s; }
+
+.acc__inner > * { padding-inline: var(--sp-5); max-width: 65ch; }
+.acc__inner > :first-child { padding-top: var(--sp-1); }
+.acc__inner > :last-child  { padding-bottom: var(--sp-5); }
+.acc__inner p + p { padding-top: var(--sp-4); }
+
+
+/* ==========================================================================
+   17 · BLOG CARDS
+   ========================================================================== */
+.posts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sp-5);
+}
+
+.post {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--surface);
+  border: var(--hair) solid var(--line);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-1);
+  transition: transform var(--t-base) var(--ease-snap),
+              box-shadow var(--t-base) var(--ease-snap),
+              border-color var(--t-base) var(--ease-snap);
+}
+
+.post:hover { transform: translateY(var(--lift)); box-shadow: var(--shadow-2); border-color: var(--brand); }
+
+.post__media {
+  display: block;
+  aspect-ratio: 16 / 9;
+  background: var(--brand-50);
+  overflow: hidden;
+}
+
+.post__media img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--t-slow) var(--ease); }
+.post:hover .post__media img { transform: scale(1.04); }
+
+.post__body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--sp-4);
+  padding: var(--sp-5);
+}
+
+.post__title { font-size: var(--fs-h4); letter-spacing: var(--ls-h3); line-height: var(--lh-snug); }
+.post__title a { color: var(--ink); text-decoration: none; }
+.post:hover .post__title a { color: var(--brand-ink); }
+
+.post__more {
+  margin-top: auto;
+  color: var(--brand-ink);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-wide);
+}
+
+.post__more span { display: inline-block; transition: transform var(--t-base) var(--ease); }
+.post:hover .post__more span { transform: translateX(var(--sp-1)); }
+
+
+/* ==========================================================================
+   18 · CLOSING CTA
+   ========================================================================== */
+.closing { --section-pt: var(--sp-8); --section-pb: var(--sp-8); }
+
+.closing__inner {
+  display: grid;
+  justify-items: center;
+  gap: var(--sp-5);
+  max-width: 46rem;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.closing__title { font-size: var(--fs-h2); letter-spacing: var(--ls-h2); }
+.closing__body  { font-size: var(--fs-lead); }
+
+.closing__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--sp-3); }
+
+
+/* ==========================================================================
+   19 · FOOTER
+   ========================================================================== */
+.site-footer {
+  background: var(--ink);
+  border-top: var(--edge) solid var(--brand);
+  color: var(--on-dark-muted);
+}
+
+.site-footer__inner {
+  display: grid;
+  grid-template-columns: 1.5fr repeat(3, minmax(0, 1fr));
+  gap: var(--sp-7);
+  padding-block: var(--sp-8);
+}
+
+/* The wordmark is navy — it needs a light plaque to stay legible on the band */
+.site-footer__mark {
+  height: auto;
+  width: 11rem;
+  margin-bottom: var(--sp-4);
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--surface);
+  border-radius: var(--r-sm);
+}
+
+.site-footer__blurb { max-width: 34ch; font-size: var(--fs-sm); }
+
+.fcol__title {
+  margin-bottom: var(--sp-4);
+  color: var(--brand);
+  font-size: var(--fs-eyebrow);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+}
+
+.fcol__list { display: grid; gap: var(--sp-1); font-size: var(--fs-sm); }
+
+.fcol__list a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--sp-6);
+  color: var(--on-dark-muted);
+  text-decoration: none;
+  transition: color var(--t-fast) var(--ease);
+}
+
+.fcol__list a:hover { color: var(--brand); text-decoration: underline; text-underline-offset: var(--sp-1); }
+
+.fcol__address { font-style: normal; padding-block: var(--sp-2); }
+.fcol__hours   { display: inline-block; padding-block: var(--sp-2); }
+
+.site-footer__base {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding-block: var(--sp-5);
+  border-top: var(--hair) solid var(--line-dark);
+  color: var(--ink-muted);
+  font-size: var(--fs-xs);
+}
+
+.site-footer :focus-visible { --focus-color: var(--brand); }
+.section--dark :focus-visible { --focus-color: var(--brand); }
+.section--brand :focus-visible { --focus-color: var(--ink); }
+
+
+/* ==========================================================================
+   20 · GROUND TREATMENTS — how each component reads on a coloured band
+   ========================================================================== */
+
+/* --- on dark ------------------------------------------------------------ */
+.section--dark .eyebrow          { color: var(--brand); }
+.section--dark .sec-head         { border-bottom-color: var(--line-dark); }
+.section--dark .sec-head__title  { color: var(--on-dark); }
+.section--dark .sec-head__lede   { color: var(--on-dark-muted); }
+.section--dark .sec-head__link   { color: var(--brand); }
+
+.why .prop {
+  background: var(--ink-700);
+  border-color: var(--line-dark);
+  border-top-color: var(--brand);
+  box-shadow: none;
+  transition: transform var(--t-base) var(--ease),
+              background-color var(--t-base) var(--ease),
+              border-color var(--t-base) var(--ease);
+}
+
+.why .prop:hover {
+  transform: translateY(var(--lift));
+  background: var(--ink-800);
+  border-color: var(--brand);
+  border-top-color: var(--brand);
+}
+
+.why .prop__title { color: var(--on-dark); }
+.why .prop__body  { color: var(--on-dark-muted); }
+
+/* --- on the warm wash --------------------------------------------------- */
+.section--wash .sec-head { border-bottom-color: var(--brand-200); }
+.section--wash .quote    { border-color: var(--brand-100); border-top-color: var(--brand); }
+.section--wash .quote::before { color: var(--brand-100); }
+.section--wash .quote__by     { border-top-color: var(--brand-100); }
+
+.quote {
+  transition: transform var(--t-base) var(--ease-snap), box-shadow var(--t-base) var(--ease-snap);
+}
+
+.quote:hover { transform: translateY(var(--lift)); box-shadow: var(--shadow-2); }
+
+/* --- on the brand fill -------------------------------------------------- */
+.section--brand .closing__title { color: var(--ink); }
+.section--brand .closing__body  { color: var(--ink-800); }
+
+.section--brand .btn--primary {
+  background: var(--ink);
+  color: var(--on-dark);
+  box-shadow: var(--shadow-2);
+}
+
+.section--brand .btn--primary:hover { background: var(--ink-800); color: var(--brand); }
+
+.section--brand .btn--ghost {
+  background: transparent;
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.section--brand .btn--ghost:hover { background: var(--ink); color: var(--on-dark); border-color: var(--ink); }
+
+
+/* ==========================================================================
+   05 · ANNOUNCEMENT BAR
+   ========================================================================== */
+/* Brand fill, so the very first band of the page carries the colour */
+.announce {
+  background: var(--brand);
+  border-top: var(--edge) solid var(--ink);   /* first shelf edge on the page */
+  color: var(--ink);
+  font-size: var(--fs-sm);
+}
+
+.announce__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2) var(--sp-5);
+  padding-block: var(--sp-2);
+}
+
+.announce__text {
+  line-height: var(--lh-normal);
+  font-variant-numeric: tabular-nums;
+}
+
+.announce__strong {
+  font-weight: var(--fw-black);
+  letter-spacing: var(--ls-wide);
+}
+
+.announce__sep {
+  padding-inline: var(--sp-1);
+  color: var(--ink-body);         /* was opacity: .45 — now on-system */
+}
+
+.announce__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  color: var(--ink);
+  font-weight: var(--fw-bold);
+  text-decoration: underline;
+  text-decoration-thickness: var(--hair);
+  text-underline-offset: var(--sp-1);
+  transition: color var(--t-fast) var(--ease),
+              text-decoration-thickness var(--t-fast) var(--ease);
+}
+
+.announce__cta:hover { text-decoration-thickness: var(--edge); }
+
+.announce :focus-visible { --focus-color: var(--ink); }
+
+
+/* ==========================================================================
+   06 · HEADER
+   ========================================================================== */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  background: var(--surface);
+  border-bottom: var(--hair) solid var(--line);
+  transition: box-shadow var(--t-base) var(--ease);
+}
+
+.site-header.is-condensed {
+  --logo-h:      32px;
+  --utility-pad: var(--sp-2);
+  border-bottom-color: transparent;
+  box-shadow: var(--shadow-header);
+}
+
+/* --- utility row -------------------------------------------------------- */
+.utility__inner {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-5);
+  padding-block: var(--utility-pad);
+  transition: padding-block var(--t-base) var(--ease);
+}
+
+.brand {
+  flex: none;
+  display: block;
+  line-height: 0;
+  border-radius: var(--r-xs);
+}
+
+.brand__mark {
+  width: auto;
+  height: var(--logo-h);
+  transition: height var(--t-base) var(--ease);
+}
+
+/* --- search ------------------------------------------------------------- */
+.search {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: stretch;
+  min-width: 0;
+  max-width: 34rem;
+  height: var(--tap);
+  background: var(--surface-alt);
+  border: var(--hair) solid var(--line);
+  border-radius: var(--r-sm);
+  overflow: hidden;
+  transition: border-color var(--t-fast) var(--ease),
+              background-color var(--t-fast) var(--ease);
+}
+
+.search:focus-within {
+  background: var(--surface);
+  border-color: var(--brand);
+}
+
+.search__cat {
+  flex: none;
+  max-width: 11rem;
+  padding-inline: var(--sp-4) var(--sp-3);
+  background: transparent;
+  border: 0;
+  border-right: var(--hair) solid var(--line);
+  color: var(--ink);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  cursor: pointer;
+}
+
+.search__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding-inline: var(--sp-4);
+  background: transparent;
+  border: 0;
+  color: var(--ink);
+  font-size: var(--fs-sm);
+}
+
+.search__input::placeholder { color: var(--ink-soft); }
+
+.search__input:focus-visible,
+.search__cat:focus-visible { outline-offset: calc(var(--focus-gap) * -2); }
+
+.search__go {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: var(--tap);
+  background: var(--brand);
+  border: 0;
+  color: var(--ink);
+  transition: background-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+
+.search__go:hover { background: var(--brand-ink); color: var(--on-dark); }
+
+/* --- utility actions ---------------------------------------------------- */
+.utility__actions {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.util-link {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  min-height: var(--tap);
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--r-sm);
+  color: var(--ink);
+  text-decoration: none;
+  transition: background-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+
+.util-link:hover { background: var(--brand-wash); color: var(--brand-ink); }
+
+.util-link__label {
+  display: flex;
+  flex-direction: column;
+  line-height: var(--lh-snug);
+}
+
+.util-link__hint {
+  color: var(--ink-soft);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+}
+
+.util-link__value {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-h3);
+}
+
+.util-link--cart .icon { color: var(--brand-ink); }
+
+/* --- category nav ------------------------------------------------------- */
+.catnav {
+  border-top: var(--hair) solid var(--line);
+  background: var(--surface);
+}
+
+.catnav__list {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: var(--sp-1);
+  margin: 0;
+}
+
+.catnav__link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: var(--sp-3) var(--sp-2);
+  color: var(--ink);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-h3);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color var(--t-fast) var(--ease);
+}
+
+/* the shelf edge, drawn on hover */
+.catnav__link::after {
+  content: "";
+  position: absolute;
+  inset-inline: var(--sp-2);
+  bottom: 0;
+  height: var(--edge);
+  background: var(--brand);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--t-base) var(--ease);
+}
+
+.catnav__link:hover { color: var(--brand-ink); }
+.catnav__link:hover::after,
+.catnav__link:focus-visible::after { transform: scaleX(1); }
+
+/* --- drawer toggle (mobile only) ---------------------------------------- */
+.drawer-toggle {
+  display: none;
+  place-items: center;
+  width: var(--tap);
+  height: var(--tap);
+  flex: none;
+  background: transparent;
+  border: var(--hair) solid var(--line);
+  border-radius: var(--r-sm);
+  color: var(--ink);
+  transition: background-color var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
+}
+
+.drawer-toggle:hover { background: var(--brand-wash); border-color: var(--brand); }
+
+
+/* ==========================================================================
+   07 · MOBILE DRAWER
+   ========================================================================== */
+.drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+}
+
+.drawer[hidden] { display: none; }
+
+.drawer__scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, .6);
+  opacity: 0;
+  transition: opacity var(--t-base) var(--ease);
+}
+
+.drawer__panel {
+  position: absolute;
+  inset-block: 0;
+  right: 0;
+  width: min(22rem, 88vw);
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border-top: var(--edge) solid var(--brand);
+  box-shadow: var(--shadow-drawer);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  transform: translateX(100%);
+  transition: transform var(--t-base) var(--ease);
+}
+
+.drawer.is-open .drawer__scrim { opacity: 1; }
+.drawer.is-open .drawer__panel { transform: translateX(0); }
+
+.drawer__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  padding: var(--sp-4) var(--sp-5);
+  border-bottom: var(--hair) solid var(--line);
+}
+
+.drawer__title {
+  font-size: var(--fs-eyebrow);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase;
+}
+
+.drawer__close {
+  display: grid;
+  place-items: center;
+  width: var(--tap);
+  height: var(--tap);
+  flex: none;
+  background: transparent;
+  border: var(--hair) solid var(--line);
+  border-radius: var(--r-sm);
+  color: var(--ink);
+  transition: background-color var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease);
+}
+
+.drawer__close:hover { background: var(--brand-wash); border-color: var(--brand); }
+
+.drawer__nav { flex: 1 1 auto; }
+
+.drawer__list { margin: 0; }
+
+.drawer__list a {
+  display: flex;
+  align-items: center;
+  min-height: var(--tap);
+  padding: var(--sp-3) var(--sp-5);
+  border-bottom: var(--hair) solid var(--line);
+  border-left: var(--edge) solid transparent;
+  color: var(--ink);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  text-decoration: none;
+  transition: background-color var(--t-fast) var(--ease),
+              border-left-color var(--t-fast) var(--ease),
+              color var(--t-fast) var(--ease);
+}
+
+.drawer__list a:hover {
+  background: var(--brand-wash);
+  border-left-color: var(--brand);
+  color: var(--brand-ink);
+}
+
+.drawer__foot {
+  display: grid;
+  gap: var(--sp-3);
+  padding: var(--sp-5);
+  background: var(--surface-alt);
+  border-top: var(--hair) solid var(--line);
+}
+
+.drawer__meta {
+  min-height: var(--tap);
+  display: flex;
+  align-items: center;
+  color: var(--ink-body);
+  font-size: var(--fs-sm);
+  font-variant-numeric: tabular-nums;
+  text-decoration: none;
+}
+
+.drawer__meta:hover { color: var(--brand-ink); }
+
+
+/* ==========================================================================
+   99 · RESPONSIVE
+   ========================================================================== */
+
+/* --- 1200 --------------------------------------------------------------- */
+@media (max-width: 1200px) {
+  :root { --gutter: var(--sp-5); }
+
+  .trade__inner { gap: var(--sp-7); }
+
+  .catnav__list { gap: var(--sp-0); }
+  .catnav__link { padding-inline: var(--sp-1); font-size: var(--fs-xs); }
+  .catnav__link::after { inset-inline: var(--sp-1); }
+  .util-link__hint { display: none; }
+}
+
+/* --- 1024 --------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .search { max-width: none; }
+  .search__cat { display: none; }
+  .util-link--phone .util-link__label { display: none; }
+  .util-link { padding-inline: var(--sp-2); }
+
+  .catnav__list {
+    justify-content: flex-start;
+    gap: var(--sp-4);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .catnav__list::-webkit-scrollbar { display: none; }
+
+  .tiles,
+  .products,
+  .posts,
+  .props { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  .sec-head__title { max-width: none; }
+}
+
+/* --- 900 ---------------------------------------------------------------- */
+@media (max-width: 900px) {
+  :root { --section-pt: var(--sp-8); --section-pb: var(--sp-8); }
+
+  .sec-head {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+  .sec-head__link { justify-self: start; }
+
+  .hero__copy,
+  .trade__inner,
+  .faq__inner { grid-template-columns: minmax(0, 1fr); gap: var(--sp-6); }
+
+  .hero__pitch { padding-bottom: var(--sp-0); }
+
+  .faq__aside { position: static; }
+  .docket--call { width: 100%; }
+
+  .quotes { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* --- 768 ---------------------------------------------------------------- */
+@media (max-width: 768px) {
+  :root { --logo-h: 34px; }
+
+  /* The docket stops overlapping and sits under the photo as its own block */
+  .hero { margin-bottom: var(--sp-0); }
+  .hero__copy { padding-block: var(--sp-7) var(--sp-6); }
+  .hero__photo { height: clamp(14rem, 52vw, 20rem); object-position: 72% center; }
+
+  .hero__band-inner {
+    position: static;
+    margin-top: calc(-1 * var(--sp-6));
+  }
+
+  .docket { width: 100%; }
+  .docket__row { grid-template-columns: 5rem minmax(0, 1fr); gap: var(--sp-3); }
+  .docket__label { grid-area: 1 / 2; }
+  .docket__value { grid-area: 1 / 1; }
+
+  .acc__btn { font-size: var(--fs-body); padding-block: var(--sp-4); }
+
+  .drawer-toggle { display: grid; }
+  .catnav { display: none; }
+  .utility__inner { gap: var(--sp-3); flex-wrap: wrap; }
+  .search { order: 3; flex-basis: 100%; }
+  .brand { margin-right: auto; }
+  .util-link--phone { display: none; }       /* lives in the drawer instead */
+  .util-link__label { display: none; }       /* icon-only trio */
+  .util-link { width: var(--tap); justify-content: center; padding-inline: var(--sp-0); }
+
+  .site-header.is-condensed { --logo-h: 28px; }
+
+  /* 44px minimum on every standalone control.
+     The extra hairlines let the search button fill its bordered container. */
+  .search { height: calc(var(--tap) + (var(--hair) * 2)); }
+
+  .announce__cta,
+  .faq__contact-link,
+  .fcol__list a {
+    min-height: var(--tap);
+    display: flex;
+    align-items: center;
+  }
+
+  .brand { display: flex; align-items: center; min-height: var(--tap); }
+}
+
+/* --- 560 ---------------------------------------------------------------- */
+@media (max-width: 560px) {
+  .tiles,
+  .products,
+  .posts,
+  .props,
+  .site-footer__inner { grid-template-columns: minmax(0, 1fr); }
+
+  .site-footer__inner { gap: var(--sp-6); padding-block: var(--sp-7); }
+  .hero__actions .btn,
+  .closing__actions .btn { flex: 1 1 100%; }
+  .marquee-sec__title { text-align: left; }
+}
+
+/* --- 480 ---------------------------------------------------------------- */
+@media (max-width: 480px) {
+  :root {
+    --gutter: var(--sp-4);
+    --section-pt: var(--sp-7);
+    --section-pb: var(--sp-7);
+    --fs-display: clamp(2rem, 8vw, 2.5rem);  /* tame the hero title on narrow screens */
+  }
+
+  .announce__sep,
+  .announce__aside { display: none; }
+  .announce__inner { justify-content: space-between; gap: var(--sp-3); }
+  .announce__text { text-align: left; }
+
+  .docket { padding: var(--sp-4); }
+  .docket__row { grid-template-columns: minmax(0, 1fr); gap: var(--sp-0); padding-block: var(--sp-2); }
+  .docket__value { grid-area: 1 / 1; }
+  .docket__label { grid-area: 2 / 1; }
+
+  .site-footer__base { flex-direction: column; align-items: flex-start; }
+}
+
+</style>
 <script>
   /* Arms the scroll-reveal styles only when JS can also disarm them, so the
      page is never left with invisible sections if the script fails to run. */
@@ -868,6 +2864,287 @@
   </div>
 </footer>
 
-<script src="js/main.js" defer></script>
+<script>
+/* ============================================================================
+   A1 Wholesale Supplies — homepage behaviour
+   ----------------------------------------------------------------------------
+   Vanilla ES6+. No dependencies, no build step.
+   Every module null-guards its own markup, so a missing section is a no-op.
+   ========================================================================== */
+(function () {
+  'use strict';
+
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  /* --------------------------------------------------------------------------
+     Sticky header — condenses past the fold line
+     ------------------------------------------------------------------------ */
+  function initStickyHeader() {
+    var header = document.getElementById('siteHeader');
+    if (!header) return;
+
+    var THRESHOLD = 120;
+    var ticking = false;
+    var condensed = false;
+
+    function apply() {
+      ticking = false;
+      var next = window.scrollY > THRESHOLD;
+      if (next === condensed) return;
+      condensed = next;
+      header.classList.toggle('is-condensed', condensed);
+    }
+
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(apply);
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    apply();
+  }
+
+  /* --------------------------------------------------------------------------
+     Mobile drawer — focus trapped, ESC closes, background inert
+     ------------------------------------------------------------------------ */
+  function initDrawer() {
+    var drawer = document.getElementById('drawer');
+    var toggle = document.getElementById('drawerToggle');
+    if (!drawer || !toggle) return;
+
+    var panel = drawer.querySelector('.drawer__panel');
+    var background = [
+      document.querySelector('.announce'),
+      document.getElementById('siteHeader'),
+      document.getElementById('main')
+    ].filter(Boolean);
+
+    var FOCUSABLE = 'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])';
+    var closeTimer = null;
+    var isOpen = false;
+
+    function focusables() {
+      return Array.prototype.filter.call(
+        panel.querySelectorAll(FOCUSABLE),
+        function (el) { return el.offsetParent !== null; }
+      );
+    }
+
+    function open() {
+      if (isOpen) return;
+      isOpen = true;
+      window.clearTimeout(closeTimer);
+
+      drawer.hidden = false;
+      background.forEach(function (el) { el.inert = true; });
+      document.body.classList.add('is-locked');
+      toggle.setAttribute('aria-expanded', 'true');
+
+      // Let the browser paint the hidden->shown state before transitioning in.
+      window.requestAnimationFrame(function () {
+        drawer.classList.add('is-open');
+        var first = focusables()[0];
+        if (first) first.focus();
+      });
+    }
+
+    function close() {
+      if (!isOpen) return;
+      isOpen = false;
+
+      drawer.classList.remove('is-open');
+      background.forEach(function (el) { el.inert = false; });
+      document.body.classList.remove('is-locked');
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.focus();
+
+      var wait = reduceMotion.matches ? 0 : 260;
+      closeTimer = window.setTimeout(function () { drawer.hidden = true; }, wait);
+    }
+
+    function trapFocus(event) {
+      if (event.key !== 'Tab') return;
+      var items = focusables();
+      if (!items.length) return;
+
+      var first = items[0];
+      var last = items[items.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+
+    toggle.addEventListener('click', open);
+
+    drawer.querySelectorAll('[data-drawer-close]').forEach(function (el) {
+      el.addEventListener('click', close);
+    });
+
+    drawer.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        close();
+        return;
+      }
+      trapFocus(event);
+    });
+
+    // A category tap should navigate, not leave the drawer hanging open.
+    drawer.querySelectorAll('a[href]').forEach(function (link) {
+      link.addEventListener('click', close);
+    });
+
+    // Resizing up to desktop makes the drawer unreachable — close it first.
+    window.matchMedia('(min-width: 769px)').addEventListener('change', function (event) {
+      if (event.matches) close();
+    });
+  }
+
+  /* --------------------------------------------------------------------------
+     Hero rotating word — Cleaning / Hygiene / Catering
+     Purely decorative: the headline already reads in full for screen readers,
+     so this only ever touches an aria-hidden subtree.
+     ------------------------------------------------------------------------ */
+  function initRotator() {
+    var track = document.getElementById('rotator');
+    if (!track) return;
+
+    var words = track.querySelectorAll('.rotator__word');
+    if (words.length < 2) return;
+    if (reduceMotion.matches) return;   // stays pinned to the first word
+
+    var INTERVAL = 2600;
+    var index = 0;
+    var timer = null;
+
+    function step() {
+      words[index].classList.remove('is-current');
+      index = (index + 1) % words.length;
+      words[index].classList.add('is-current');
+    }
+
+    function start() { if (!timer) timer = window.setInterval(step, INTERVAL); }
+    function stop()  { window.clearInterval(timer); timer = null; }
+
+    // Don't burn cycles rotating a word nobody is looking at.
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) stop(); else start();
+    });
+
+    start();
+  }
+
+  /* --------------------------------------------------------------------------
+     FAQ accordion — one open at a time, fluid height via 0fr → 1fr
+     ------------------------------------------------------------------------ */
+  function initAccordion() {
+    var root = document.getElementById('faqAccordion');
+    if (!root) return;
+
+    var buttons = root.querySelectorAll('.acc__btn');
+    if (!buttons.length) return;
+
+    function setOpen(button, open) {
+      var item = button.closest('.acc__item');
+      if (!item) return;
+      item.classList.toggle('is-open', open);
+      button.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+
+    buttons.forEach(function (button) {
+      button.addEventListener('click', function () {
+        var isOpen = button.getAttribute('aria-expanded') === 'true';
+
+        buttons.forEach(function (other) { setOpen(other, false); });
+        setOpen(button, !isOpen);
+      });
+    });
+  }
+
+  /* --------------------------------------------------------------------------
+     Scroll reveal — a single 12px rise per section, fired once
+     ------------------------------------------------------------------------ */
+  function initReveal() {
+    var targets = document.querySelectorAll('[data-reveal]');
+    if (!targets.length) return;
+
+    function showAll() {
+      targets.forEach(function (el) { el.classList.add('is-in'); });
+    }
+
+    if (reduceMotion.matches || !('IntersectionObserver' in window)) {
+      showAll();
+      return;
+    }
+
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-in');
+        observer.unobserve(entry.target);
+      });
+    }, { rootMargin: '0px 0px -10% 0px', threshold: 0.05 });
+
+    targets.forEach(function (el) { observer.observe(el); });
+  }
+
+  /* --------------------------------------------------------------------------
+     Count-up on the docket figure — runs once, when the docket is in view
+     ------------------------------------------------------------------------ */
+  function initCounters() {
+    var counters = document.querySelectorAll('[data-count]');
+    if (!counters.length) return;
+    if (reduceMotion.matches || !('IntersectionObserver' in window)) return;
+
+    var DURATION = 900;
+
+    function run(el) {
+      var target = parseInt(el.getAttribute('data-count'), 10);
+      var suffix = el.getAttribute('data-suffix') || '';
+      if (isNaN(target)) return;
+
+      var started = null;
+
+      function frame(now) {
+        if (started === null) started = now;
+        var progress = Math.min((now - started) / DURATION, 1);
+        var eased = 1 - Math.pow(1 - progress, 3);
+
+        el.textContent = Math.round(target * eased) + suffix;
+        if (progress < 1) window.requestAnimationFrame(frame);
+      }
+
+      window.requestAnimationFrame(frame);
+    }
+
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        observer.unobserve(entry.target);
+        run(entry.target);
+      });
+    }, { threshold: 0.6 });
+
+    counters.forEach(function (el) { observer.observe(el); });
+  }
+
+  /* --------------------------------------------------------------------------
+     Boot
+     ------------------------------------------------------------------------ */
+  initStickyHeader();
+  initDrawer();
+  initRotator();
+  initAccordion();
+  initReveal();
+  initCounters();
+})();
+
+</script>
 </body>
 </html>
