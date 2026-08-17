@@ -1,4 +1,11 @@
-# Project Brief — A1 Wholesale Supplies Homepage Redesign
+# Project Brief — A1 Wholesale Supplies Homepage
+
+> **Status: Phase 2 — Authenticity & Polish.**
+> The page is built. Sections §1–§12 below are the locked content spec — they are
+> ground truth, not a to-do list. **Do not rebuild them.**
+> The work for this phase is defined in **§7 Polish Brief** at the end of this file.
+
+---
 
 ## 0. Reference & Ground Truth
 
@@ -40,8 +47,6 @@ certifications, payment methods, or services.
 - **Primary conversion:** Trade account applications →
   `https://a1supplies.com.au/enquire-about-trade-pricing/`
 - **Secondary conversion:** Catalog browse → `https://a1supplies.com.au/shop/`
-  ⚠️ The live site's hero "Browse Products" button wrongly points at
-  `/my-account/`. Fix this — it breaks the funnel at the front door.
 - **Audience:** Facilities managers, school and childcare administrators,
   aged-care operations, hospitality venues, commercial cleaning contractors.
   They reorder on a schedule. Their core fear is running out mid-operation.
@@ -81,6 +86,7 @@ standing order — not a discount store.
 ---
 
 ## 4. Section Architecture & Content
+*(Locked. This is what is already built — reference only.)*
 
 ### 1. Announcement Bar
 Copy: *"FREE Melbourne Metro delivery on orders over $250 + GST | Trade accounts
@@ -94,20 +100,15 @@ CTA: *"Apply for Trade Pricing →"* → `/enquire-about-trade-pricing/`
   Cleaning Chemicals · Paper Products · Bathroom Supplies · Take Away Containers ·
   Gloves & PPE · Janitorial Supplies · Kitchen Supplies · Baby Care · Eco Friendly
 
-  ⚠️ The live site has ~200 menu items across two duplicated taxonomies
-  (including a typo'd "Floor Care & Maintainance", an "Uncategorized" category,
-  and "Our best sellers" used as a category). Do not replicate any of this.
-
 ### 3. Hero
 - **Headline:** *"Your Supplies. Sorted. Every time."*
-  with a rotating word — **Cleaning / Hygiene / Catering** — preserved from
-  the live site.
+  with a rotating word — **Cleaning / Hygiene / Catering**.
 - **Subhead:** *"Built for businesses that can't afford to run out. Reliable
   supply, competitive pricing and real personal service — so managing essentials
   stops being a problem you have to think about."*
 - **Primary CTA:** *"Apply for Trade Pricing"* → `/enquire-about-trade-pricing/`
 - **Secondary CTA:** *"Browse Products"* → `/shop/`
-- **Trust metrics bar** (verbatim from live site — do not substitute):
+- **Trust metrics bar** (verbatim — do not substitute):
   `15+` Years experience · `Leading` Brands only · `Fast` Reliable delivery ·
   `Real` Personal service
 
@@ -121,11 +122,10 @@ CTA: *"Apply for Trade Pricing →"* → `/enquire-about-trade-pricing/`
 | Hospitality & Catering | `/hospitality-catering/` |
 | Professional Cleaners | `/professional-cleaners/` |
 
-This is the strongest section on the live site. Give it prominence.
+Strongest section on the live site. Keep its prominence.
 
 ### 5. Why Businesses Choose Us — 4 value props
-Section eyebrow: *"Why Businesses Choose Us"*
-Section heading: *"A Supplier You Can Actually Rely On"*
+Eyebrow: *"Why Businesses Choose Us"* · Heading: *"A Supplier You Can Actually Rely On"*
 
 1. **Never run out** — Priority supply and reliable delivery so your team always
    has what they need.
@@ -136,11 +136,10 @@ Section heading: *"A Supplier You Can Actually Rely On"*
 4. **True partner** — 15+ years experience. Personal service from people who know
    your industry.
 
-(All four verbatim from the live site. Do not rewrite.)
+(Verbatim. Do not rewrite.)
 
 ### 6. Best Sellers — 6 product cards
-**Rule: omit review stars and rating figures entirely.** The live site renders
-"0 out of 5" on every product, which actively damages trust.
+**Rule: no review stars or rating figures.**
 
 | Product | Category | Price |
 |---|---|---|
@@ -151,8 +150,8 @@ Section heading: *"A Supplier You Can Actually Rely On"*
 | Sabco 350g UltraClean Microfibre Round Mop | Janitorial Supplies | From $19.60 |
 | Sabco Black Nitrile Disposable Gloves 1000PK | Gloves & PPE | From $8.91 |
 
-Variant products ("From $X") get a *"Select options"* button; fixed-price
-products get *"Add to cart"*. Both are visual only — no cart logic.
+Variant products ("From $X") → *"Select options"*; fixed-price → *"Add to cart"*.
+Visual only, no cart logic.
 
 ### 7. Trade Account Band — full-width dark
 Eyebrow: *"Business & Trade Accounts"*
@@ -170,24 +169,19 @@ Continuous horizontal scroll of supplier logos. Pause on hover.
 2. **Edward Baxter** — Buildings & Grounds Supervisor, Brighton Haileybury College
 3. **Shreya Dhariya** — Inventory Coordinator, Alpha Corporate Property Services
 
-Pull quote text from the live site. ⚠️ A fourth testimonial there is placeholder
-copy about accounting that recommends an unrelated company — excluded deliberately.
-
 ### 10. FAQ Accordion — 6 items
-Source answers from the live site's FAQ. Cover:
-delivery areas and timeframes (1–3 business days Melbourne metro) · free delivery
+Delivery areas and timeframes (1–3 business days Melbourne metro) · free delivery
 threshold ($250 + GST) · trade account application and approval (1 business day) ·
 industries supplied · Safety Data Sheets availability · returns policy.
 
-Do not invent payment methods, order minimums or warehouse pickup — none of these
-appear on the live site.
+Do not invent payment methods, order minimums or warehouse pickup.
 
 ### 11. Industry Insights — 3 blog cards
 1. *Why SC Johnson Professional is the Leader in Foaming Hand Soap*
 2. *Your One-Stop Supplier for Kimberly-Clark Professional Products in Australia*
 3. *How to Reduce Consumable Costs in Your Business*
 
-Link each to its live URL. Add a *"View all articles"* link → `/news-articles/`.
+Plus *"View all articles"* → `/news-articles/`.
 
 ### 12. Final CTA + Footer
 **Closing CTA:** *"Ready to sort your supplies once and for all?"* — *"Browse our
@@ -202,23 +196,87 @@ your business."* Two buttons: trade pricing · browse all products.
 - **Information:** FAQs · Safety Data Sheets · News & Articles ·
   Shipping & Returns · Terms & Conditions · Privacy Policy · My Account
 
-⚠️ On the live site the footer "Privacy Policy" link points at the cleaning
-chemicals category. Point it at `/privacy-policy/`.
+---
 
-⚠️ The live site's mobile menu leaks placeholder links to `themepanthers.com`
-(the theme vendor's demo). Do not reproduce these anywhere.
+## 5. Live-site issues already fixed — verify, don't redo
+1. Page `<title>` was literally "supplies" → real title + meta description.
+2. ~200-item mega menu → 9 clean top-level categories.
+3. Hero "Browse Products" CTA pointed at `/my-account/` → now `/shop/`.
+4. "0 out of 5" stars on every product → removed entirely.
+5. Placeholder testimonial recommending an unrelated company → excluded.
+6. Theme-vendor (`themepanthers.com`) demo links in mobile menu → removed.
+7. Footer Privacy Policy pointed at a product category → now `/privacy-policy/`.
+8. Delivery threshold and 1–3 day dispatch buried in FAQ → surfaced in hero.
+
+**Confirm each of these is genuinely true in the current build. Report any that
+regressed.**
 
 ---
 
-## 5. Known Issues Being Fixed
-Listed so the redesign is measurably better, not just different:
+## 6. Audit checklist
+Work through the built page against these before proposing anything.
 
-1. Page `<title>` is literally "supplies" — no brand, no keywords.
-2. ~200-item mega menu across two duplicated taxonomies.
-3. Hero "Browse Products" CTA points to `/my-account/` instead of `/shop/`.
-4. Every product displays "0 out of 5" stars.
-5. A placeholder testimonial recommending an unrelated company.
-6. Theme-vendor demo links leaking in the mobile menu.
-7. Footer Privacy Policy linking to a product category.
-8. Free delivery threshold and 1–3 day dispatch buried in an FAQ accordion
-   instead of surfaced in the hero.
+**Craft**
+- Vertical rhythm: is section padding consistent, or ad-hoc per section?
+- Type scale: is there a real hierarchy, or three sizes doing nine jobs?
+- Optical alignment: do card grids share a baseline? Equal-height rows?
+- Measure: is body copy capped around 65–75 characters?
+- Colour: how many distinct greys are actually in use? Consolidate.
+- Borders and shadows: consistent radius and elevation language, or mixed?
+
+**Authenticity signals** (what makes it read as a real trading business rather
+than a template)
+- Does anything on the page look like a placeholder? Generic icons, lorem
+  spacing, evenly-perfect card copy lengths?
+- Do product images sit on a consistent background, or is it a ransom note of
+  different white balances and crops?
+- Is the logo rendered at a sensible size and pixel density?
+- Are the testimonials visually credible without inventing photos or logos?
+- Does the phone number look like something you'd click at 4:50pm on a Friday?
+
+**Motion**
+- Is hover state distinguishable from focus state?
+- Does anything animate on load and delay first paint?
+- Is easing consistent, or a mix of `ease`, `linear` and default?
+- Marquee: does it loop seamlessly, or visibly jump?
+
+**Responsive**
+- 1440 / 1280 / 1024 / 768 / 375 — where does it first look wrong?
+- Does the industry grid reflow sensibly, or squash to 3 cramped columns?
+- Sticky header height on mobile — how much viewport does it eat?
+
+**Technical**
+- CLS from unsized images.
+- Total image weight; anything served far larger than displayed.
+- Any duplicated or dead CSS.
+- Console errors, `alt` gaps, heading-level skips (h1→h3).
+
+---
+
+## 7. Polish Brief — this phase's actual work
+
+The goal is a page that reads as **authentically built for this business**, not
+assembled from a template. Improvements should be legible as craft, not as effects.
+
+**In scope**
+- Refined spacing, type scale and colour consistency via existing tokens.
+- Better image treatment: consistent product-shot backgrounds, correct sizing,
+  `aspect-ratio` boxes, `loading="lazy"` below the fold.
+- Purposeful micro-interaction: hover, focus, active and disabled states on every
+  interactive element; a subtle scroll-reveal at most, `prefers-reduced-motion` aware.
+- Real texture in place of flatness — considered borders, restrained elevation,
+  a subtle background treatment on dark bands.
+- Trust detail that costs nothing and is *true*: the ABN-free footer tidied,
+  opening hours legible, phone as a `tel:` link, address as a proper `<address>`.
+- Accessibility and performance improvements.
+
+**Out of scope**
+- New sections, new pages, new copy, new claims.
+- Section reordering without asking.
+- Any library, font CDN, or build tooling.
+- Decorative effects from the taste-guardrails list in `CLAUDE.md`.
+
+**Definition of done**
+Every change traces to a specific audit finding, sits behind a design token,
+passes AA contrast, works with a keyboard, and degrades under
+`prefers-reduced-motion`.

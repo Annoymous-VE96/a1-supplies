@@ -58,6 +58,7 @@
   --fs-display:   clamp(2.5rem, 5vw, 4rem);
   --fs-h2:        clamp(1.875rem, 3vw, 2.5rem);
   --fs-h3:        1.375rem;
+  --fs-h4:        1.125rem;  /* 18px — content labels: post titles, product card titles */
   --fs-lead:      1.1875rem;
   --fs-body:      1rem;
   --fs-sm:        .875rem;
@@ -117,7 +118,8 @@
   --t-fast:  140ms;
   --t-base:  240ms;
   --t-slow:  420ms;
-  --ease:    cubic-bezier(.2, .7, .3, 1);
+  --ease:      cubic-bezier(.2, .7, .3, 1);
+  --ease-snap:  cubic-bezier(.4, 0, .2, 1);  /* snappier for hover/active micro-interactions */
   --lift:    -4px;
 
   /* --- Layout ------------------------------------------------------------ */
@@ -131,6 +133,10 @@
   /* Header metrics — JS reads nothing; the condensed state just re-declares. */
   --logo-h:      44px;
   --utility-pad: var(--sp-4);
+
+  /* Section padding — modulated by density */
+  --section-pad:       var(--sp-9);  /* 96px: generous for breathing sections */
+  --section-pad-snug:  var(--sp-7);  /* 48px: dense-content sections */
 
   /* Composition */
   --hero-overhang: var(--sp-8);   /* how far the docket breaks past the photo */
@@ -313,11 +319,11 @@ ul, ol { list-style: none; padding: 0; }
   letter-spacing: var(--ls-wide);
   line-height: var(--lh-normal);
   text-decoration: none;
-  transition: background-color var(--t-fast) var(--ease),
-              border-color var(--t-fast) var(--ease),
-              color var(--t-fast) var(--ease),
-              box-shadow var(--t-fast) var(--ease),
-              transform var(--t-fast) var(--ease);
+  transition: background-color var(--t-fast) var(--ease-snap),
+              border-color var(--t-fast) var(--ease-snap),
+              color var(--t-fast) var(--ease-snap),
+              box-shadow var(--t-fast) var(--ease-snap),
+              transform var(--t-fast) var(--ease-snap);
 }
 
 .btn:active { transform: translateY(var(--hair)); }
@@ -408,6 +414,7 @@ ul, ol { list-style: none; padding: 0; }
 .section > * { position: relative; }
 
 .section--tight { --section-pt: var(--sp-7); --section-pb: var(--sp-7); }
+.section--snug  { --section-pt: var(--section-pad-snug); --section-pb: var(--section-pad-snug); }
 
 .sec-head {
   display: grid;
@@ -584,6 +591,8 @@ ul, ol { list-style: none; padding: 0; }
   object-position: 62% center;
   animation: hero-drift var(--drift-dur) var(--ease) infinite alternate;
 }
+/* Note: @keyframes hero-drift easing is now via the animation shorthand above,
+   not the CSS 'ease' keyword. The var(--ease) token ensures consistency. */
 
 @keyframes hero-drift {
   from { transform: scale(1)     translate3d(0, 0, 0); }
@@ -691,9 +700,9 @@ ul, ol { list-style: none; padding: 0; }
   overflow: hidden;
   box-shadow: var(--shadow-1);
   text-decoration: none;
-  transition: transform var(--t-base) var(--ease),
-              box-shadow var(--t-base) var(--ease),
-              border-color var(--t-base) var(--ease);
+  transition: transform var(--t-base) var(--ease-snap),
+              box-shadow var(--t-base) var(--ease-snap),
+              border-color var(--t-base) var(--ease-snap);
 }
 
 .tile:hover { transform: translateY(var(--lift)); box-shadow: var(--shadow-2); border-color: var(--brand); }
@@ -810,9 +819,9 @@ ul, ol { list-style: none; padding: 0; }
   border-radius: var(--r-md);
   overflow: hidden;
   box-shadow: var(--shadow-1);
-  transition: transform var(--t-base) var(--ease),
-              box-shadow var(--t-base) var(--ease),
-              border-color var(--t-base) var(--ease);
+  transition: transform var(--t-base) var(--ease-snap),
+              box-shadow var(--t-base) var(--ease-snap),
+              border-color var(--t-base) var(--ease-snap);
 }
 
 .pcard:hover { transform: translateY(var(--lift)); box-shadow: var(--shadow-2); border-color: var(--brand); }
@@ -824,12 +833,13 @@ ul, ol { list-style: none; padding: 0; }
   gap: var(--sp-3);
   aspect-ratio: 4 / 3;
   padding: var(--sp-5);
-  background: var(--brand-50);
+  background: var(--surface);
   border-bottom: var(--hair) solid var(--line);
+  box-shadow: inset 0 0 0 var(--hair) var(--line);  /* subtle inset frame */
   transition: background-color var(--t-base) var(--ease);
 }
 
-.pcard:hover .pcard__media { background: var(--brand-wash); }
+.pcard:hover .pcard__media { background: var(--surface-alt); }
 
 .pcard__media img {
   max-width: 100%;
@@ -871,8 +881,8 @@ ul, ol { list-style: none; padding: 0; }
 
 /* Two-line box keeps prices and CTAs on one line across a row */
 .pcard__title {
-  min-height: calc(var(--fs-body) * var(--lh-snug) * 2);
-  font-size: var(--fs-body);
+  min-height: calc(var(--fs-h4) * var(--lh-snug) * 2);
+  font-size: var(--fs-h4);
   font-weight: var(--fw-semibold);
   line-height: var(--lh-snug);
 }
@@ -992,7 +1002,8 @@ ul, ol { list-style: none; padding: 0; }
   align-items: center;
   gap: var(--sp-5);
   margin: 0;
-  padding-inline: var(--sp-3);
+  /* Use gap-only spacing — padding creates a seam at the loop point. */
+  padding-inline: calc(var(--sp-5) / 2);
 }
 
 /* The supplied logo files carry their own white ground, so each one is set on
@@ -1075,6 +1086,7 @@ ul, ol { list-style: none; padding: 0; }
 
 .quote__text {
   position: relative;
+  max-width: 65ch;
   color: var(--ink);
   font-size: var(--fs-body);
   line-height: var(--lh-body);
@@ -1085,7 +1097,9 @@ ul, ol { list-style: none; padding: 0; }
   gap: var(--sp-1);
   margin-top: auto;
   padding-top: var(--sp-4);
+  padding-left: var(--sp-4);
   border-top: var(--hair) solid var(--line);
+  border-left: var(--edge) solid var(--brand);
 }
 
 .quote__name {
@@ -1185,16 +1199,24 @@ ul, ol { list-style: none; padding: 0; }
   line-height: var(--lh-snug);
   text-align: left;
   transition: color var(--t-fast) var(--ease),
-              padding-left var(--t-base) var(--ease),
               border-left-color var(--t-base) var(--ease);
+}
+
+/* The indent is done via transform, not padding — avoids layout-triggering animation. */
+.acc__btn > span {
+  display: block;
+  transition: transform var(--t-base) var(--ease);
 }
 
 .acc__btn:hover { color: var(--brand-ink); }
 
 .acc__item.is-open .acc__btn {
   color: var(--brand-ink);
-  padding-left: var(--sp-4);
   border-left-color: var(--brand);
+}
+
+.acc__item.is-open .acc__btn > span {
+  transform: translateX(var(--sp-1));
 }
 
 .acc__chevron {
@@ -1228,7 +1250,7 @@ ul, ol { list-style: none; padding: 0; }
 
 .acc__item.is-open .acc__inner { visibility: visible; transition-delay: 0s; }
 
-.acc__inner > * { padding-inline: var(--sp-5); }
+.acc__inner > * { padding-inline: var(--sp-5); max-width: 65ch; }
 .acc__inner > :first-child { padding-top: var(--sp-1); }
 .acc__inner > :last-child  { padding-bottom: var(--sp-5); }
 .acc__inner p + p { padding-top: var(--sp-4); }
@@ -1253,9 +1275,9 @@ ul, ol { list-style: none; padding: 0; }
   border-radius: var(--r-md);
   overflow: hidden;
   box-shadow: var(--shadow-1);
-  transition: transform var(--t-base) var(--ease),
-              box-shadow var(--t-base) var(--ease),
-              border-color var(--t-base) var(--ease);
+  transition: transform var(--t-base) var(--ease-snap),
+              box-shadow var(--t-base) var(--ease-snap),
+              border-color var(--t-base) var(--ease-snap);
 }
 
 .post:hover { transform: translateY(var(--lift)); box-shadow: var(--shadow-2); border-color: var(--brand); }
@@ -1278,7 +1300,7 @@ ul, ol { list-style: none; padding: 0; }
   padding: var(--sp-5);
 }
 
-.post__title { font-size: var(--fs-h3); letter-spacing: var(--ls-h3); line-height: var(--lh-snug); }
+.post__title { font-size: var(--fs-h4); letter-spacing: var(--ls-h3); line-height: var(--lh-snug); }
 .post__title a { color: var(--ink); text-decoration: none; }
 .post:hover .post__title a { color: var(--brand-ink); }
 
@@ -1422,7 +1444,7 @@ ul, ol { list-style: none; padding: 0; }
 .section--wash .quote__by     { border-top-color: var(--brand-100); }
 
 .quote {
-  transition: transform var(--t-base) var(--ease), box-shadow var(--t-base) var(--ease);
+  transition: transform var(--t-base) var(--ease-snap), box-shadow var(--t-base) var(--ease-snap);
 }
 
 .quote:hover { transform: translateY(var(--lift)); box-shadow: var(--shadow-2); }
@@ -1480,7 +1502,7 @@ ul, ol { list-style: none; padding: 0; }
 
 .announce__sep {
   padding-inline: var(--sp-1);
-  opacity: .45;
+  color: var(--ink-body);         /* was opacity: .45 — now on-system */
 }
 
 .announce__cta {
@@ -1890,6 +1912,8 @@ ul, ol { list-style: none; padding: 0; }
 
 /* --- 768 ---------------------------------------------------------------- */
 @media (max-width: 768px) {
+  :root { --logo-h: 34px; }
+
   /* The docket stops overlapping and sits under the photo as its own block */
   .hero { margin-bottom: var(--sp-0); }
   .hero__copy { padding-block: var(--sp-7) var(--sp-6); }
@@ -1906,11 +1930,6 @@ ul, ol { list-style: none; padding: 0; }
   .docket__value { grid-area: 1 / 1; }
 
   .acc__btn { font-size: var(--fs-body); padding-block: var(--sp-4); }
-}
-
-/* --- 768 ---------------------------------------------------------------- */
-@media (max-width: 768px) {
-  :root { --logo-h: 34px; }
 
   .drawer-toggle { display: grid; }
   .catnav { display: none; }
@@ -1954,7 +1973,12 @@ ul, ol { list-style: none; padding: 0; }
 
 /* --- 480 ---------------------------------------------------------------- */
 @media (max-width: 480px) {
-  :root { --gutter: var(--sp-4); --section-pt: var(--sp-7); --section-pb: var(--sp-7); }
+  :root {
+    --gutter: var(--sp-4);
+    --section-pt: var(--sp-7);
+    --section-pb: var(--sp-7);
+    --fs-display: clamp(2rem, 8vw, 2.5rem);  /* tame the hero title on narrow screens */
+  }
 
   .announce__sep,
   .announce__aside { display: none; }

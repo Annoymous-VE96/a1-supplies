@@ -1,78 +1,80 @@
-# A1 Wholesale Supplies — Homepage Redesign
+# A1 Wholesale Supplies — Homepage (Phase 2: Authenticity & Polish)
+
+## What this project is now
+The homepage already exists and works. `index.html`, `css/style.css`, `js/main.js`
+are built. **This phase is refinement, not construction.**
+
+Do NOT rebuild the page. Do NOT restructure the section order. Do NOT rewrite
+copy. You are improving craft: visual detail, motion, imagery, spacing, states.
+
+---
 
 ## Reference — read before doing anything
-**Live site:** https://a1supplies.com.au/
+- **Live site (source of truth for copy/products/assets):** https://a1supplies.com.au/
+- **Original build brief:** `@BRIEF.md` — read it. Every constraint in it still applies.
+- Read the existing `index.html`, `css/style.css` and `js/main.js` **in full**
+  before proposing anything. Critique what is actually there, not what you assume.
 
-WebFetch this URL before planning. It is the source of truth for copy, product
-data, category structure, and brand assets. This is a **redesign, not a rewrite** —
-preserve real copy and real claims. Never invent statistics, certifications,
-payment methods, awards, or services that do not appear on the live site.
-
-Full content and design direction lives in `BRIEF.md`. Read it with `@BRIEF.md`.
+**Redesign, not rewrite.** Never invent statistics, certifications, payment
+methods, awards, testimonials, prices, or services that are not on the live site.
 
 ---
 
 ## Scope — hard boundary
-ONE deliverable: `index.html` (homepage only).
+ONE deliverable: the existing homepage.
 
-- Do NOT create `/shop`, `/product`, `/cart`, `/checkout`, `/about`, `/contact`,
-  `/login`, or any other page.
-- Nav and footer links point to the live site
-  (e.g. `https://a1supplies.com.au/shop/`) or to `#`.
-- Do NOT scaffold an e-commerce system, cart state, auth, or product filtering.
-  This is a static marketing homepage.
-- If a section seems to need another page, link out. Do not build it.
+- No new pages. Nav/footer links point to the live site or `#`.
+- No cart state, auth, product filtering, or backend.
+- New files only inside `assets/` (images, svg, fonts). Ask before adding any
+  new `.html`, `.css` or `.js` file.
 
 ---
 
-## Stack
-Vanilla HTML5, CSS3, JavaScript (ES6+) only.
-
-- No frameworks. No Tailwind, Bootstrap, React, jQuery.
-- No build step, no npm, no bundler.
-- No CDN links. No external requests except images pulled from the live site.
-- Must run by double-clicking `index.html`.
-
----
-
-## File structure
-```
-index.html
-css/style.css
-js/main.js
-assets/
-```
-Do not add files outside this structure without asking first.
+## Stack — unchanged
+Vanilla HTML5, CSS3, JS (ES6+). No frameworks, no Tailwind, no build step,
+no npm, no CDN. Must still run by double-clicking `index.html`.
+External requests limited to images pulled from the live site.
 
 ---
 
 ## CSS rules
-- `style.css` opens with a `:root` design-token block: colours, spacing scale,
-  type scale, radii, shadows, transitions.
-- Every value in the stylesheet references a token. No magic numbers.
-- Mobile breakpoints via `max-width` media queries (desktop-first — see BRIEF.md).
-- Use CSS Grid and Flexbox. No floats, no absolute-positioning layouts.
+- Design tokens stay in the `:root` block. **New values become new tokens** —
+  no magic numbers anywhere in the stylesheet.
+- Desktop-first, `max-width` media queries. Grid and Flexbox only.
+- If you add tokens, group them with the existing scale rather than
+  inventing a parallel system.
 
 ---
 
-## Quality bar
-- Semantic HTML5 landmarks: `<header>`, `<nav>`, `<main>`, `<section>`, `<footer>`.
-- WCAG AA contrast minimum. Visible `:focus-visible` states on all interactive elements.
+## Quality bar — must not regress
+- Semantic landmarks: `<header>`, `<nav>`, `<main>`, `<section>`, `<footer>`.
+- WCAG AA contrast. Visible `:focus-visible` on every interactive element.
 - 44px minimum tap targets on mobile.
-- Real `<title>` and `<meta name="description">`. The live site's title is
-  literally "supplies" — fix this.
-- Descriptive `alt` on every image. Decorative images get `alt=""`.
-- Accordion and mobile drawer must be keyboard-operable with correct
-  `aria-expanded` / `aria-controls`.
-- Animations respect `prefers-reduced-motion`.
+- Descriptive `alt` on every image; `alt=""` on decorative.
+- Accordion and mobile drawer keyboard-operable with correct
+  `aria-expanded` / `aria-controls`. ESC closes the drawer, focus is trapped.
+- **Every animation respects `prefers-reduced-motion`.** No exceptions.
+- No layout shift: images get explicit `width`/`height` or `aspect-ratio`.
+- Page must stay fast. No animation on `top`/`left`/`width`/`height` —
+  `transform` and `opacity` only.
 
 ---
 
 ## Working rules
-- **Enter plan mode first.** Propose the approach before writing any code.
-- Build **section by section**. Stop after each for review. Do not one-shot
-  the full page.
-- Never invent product names, prices, testimonials, or business claims —
-  use `BRIEF.md` and the live site only.
-- If something in the brief conflicts with the live site, flag it and ask.
-  Do not silently pick one.
+1. **Plan mode first.** Audit, then propose. No code until the plan is approved.
+2. Present findings as a **prioritised list** — highest visual impact per unit of
+   effort first — with a one-line rationale each. Not a wall of prose.
+3. Then build **one section at a time**. Stop after each for review.
+   Do not one-shot the whole page.
+4. Show the before/after reasoning for any change to spacing, colour or motion.
+5. If the brief conflicts with the live site, or a proposed change would break a
+   rule above, flag it and ask. Do not silently pick one.
+
+## Taste guardrails
+The target is *industrial-practical*: a supplier a facilities manager trusts with
+a standing order. Restraint reads as competence here.
+
+Do not add: glassmorphism, neon gradients, purple/blue SaaS palettes, floating
+blobs, parallax hero, particle backgrounds, typewriter effects, bouncy easing,
+emoji as icons, or AI-generated stock imagery. Orange `#F36F21` is the accent —
+it stays an accent, not a wash.
